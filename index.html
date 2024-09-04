@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Text Analysis</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/compromise@latest/builds/compromise.min.js"></script>
+  </head>
+  <body>
+    <h1>Text Analysis</h1>
+    <div class="container">
+      <!-- Левая панель -->
+      <div class="left-panel">
+        <textarea id="text" placeholder="Enter your text here..."></textarea>
+        <button id="extractPhrasalVerbsBtn">Extract Phrasal Verbs</button>
+        <button id="extractUniqueWordsBtn">Extract Unique Words</button>
+      </div>
+
+      <!-- Правая панель -->
+      <div class="right-panel">
+        <div class="result-panel">
+          <h2>Phrasal Verbs:</h2>
+          <ul id="phrasalVerbs"></ul>
+        </div>
+        <div class="result-panel">
+          <h2>Unique Words:</h2>
+          <ul id="uniqueWords"></ul>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const extractUniquePhrasalVerbs = () => {
+          const text = document.getElementById('text').value;
+          const doc = nlp(text);
+          const phrasalVerbs = doc.match('#Verb #Particle').out('array');
+          const uniquePhrasalVerbs = [...new Set(phrasalVerbs)];
+
+          const results = document.getElementById('phrasalVerbs');
+          results.innerHTML = '';
+          uniquePhrasalVerbs.forEach((verb) => {
+            const li = document.createElement('li');
+            li.textContent = verb;
+            results.appendChild(li);
+          });
+        };
+
+        const extractUniqueWords = () => {
+          const text = document.getElementById('text').value;
+          const doc = nlp(text);
+          const words = doc.terms().out('array');
+          const uniqueWords = [...new Set(words)]
+            .sort((a, b) => b.length - a.length)
+            .filter((word) => word.length > 2);
+
+          const results = document.getElementById('uniqueWords');
+          results.innerHTML = '';
+          uniqueWords.forEach((word) => {
+            const li = document.createElement('li');
+            li.textContent = word;
+            results.appendChild(li);
+          });
+        };
+
+        document
+          .getElementById('extractPhrasalVerbsBtn')
+          .addEventListener('click', extractUniquePhrasalVerbs);
+        document
+          .getElementById('extractUniqueWordsBtn')
+          .addEventListener('click', extractUniqueWords);
+      });
+    </script>
+  </body>
+</html>
